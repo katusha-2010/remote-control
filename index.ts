@@ -70,11 +70,24 @@ wss.on("connection", function connection(ws) {
       default:
         break;
     }
-    console.log(`Command: ${command}\nResult: ${heightFigure? 
-      `${command} ${+widthFigure} ${+heightFigure}`
-      : (widthFigure? 
-        `${command} ${+widthFigure}` 
-        : `${command} ${mouseCoordinate.x},${mouseCoordinate.y}`)}`);
+
+    let consoleResult:string;
+    switch (command) {
+      case 'prnt_scrn':
+        consoleResult = '';
+        break;
+      case 'mouse_position':
+        consoleResult = `${mouseCoordinate.x},${mouseCoordinate.y}`;
+        break;
+      case 'draw_rectangle':
+        consoleResult = `${+widthFigure} ${+heightFigure}`;
+        break;    
+      default:
+        consoleResult = `${+widthFigure}`;
+        break;
+    }
+
+    console.log(`Command: ${command}\nResult:${command} ${consoleResult}`);
 
     } catch  {
       console.log("Smth went wrong");
