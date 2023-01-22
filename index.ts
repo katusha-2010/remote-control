@@ -22,9 +22,10 @@ const wss = new WebSocketServer({ port: WEBSOCKET_PORT });
 wss.on("connection", function connection(ws) {
 
   console.log(`Start websocket server on the ${WEBSOCKET_PORT} port!`);  
-  const stream = createWebSocketStream(ws, {decodeStrings:false});  
+  const stream = createWebSocketStream(ws, {decodeStrings:false});
 
-  stream.on("data", async function message(data) {    
+  stream.on("data", async function message(data) {
+    try {  
     const commandArr = data.toString().split(' ');
     const [command, widthFigure, heightFigure] = commandArr;
     let mouseCoordinate = {x:0, y:0};
@@ -74,12 +75,15 @@ wss.on("connection", function connection(ws) {
       : (widthFigure? 
         `${command} ${+widthFigure}` 
         : `${command} ${mouseCoordinate.x},${mouseCoordinate.y}`)}`);
-  });
 
+    } catch  {
+      console.log("Smth went wrong");
+    } 
+  });
 }); 
 
 process.on('SIGINT', function() {
     wss.close();
     console.log('Соединение закрыто');
-    process.exit()
+    process.exit();
 })
