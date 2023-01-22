@@ -1,8 +1,14 @@
-import { mouse, straightTo, Button } from "@nut-tree/nut-js";
+import { mouse, straightTo, Button, screen } from "@nut-tree/nut-js";
 
 export async function drawCircle(r: number) {
   const position = await mouse.getPosition();  
-  const {x, y} =  position;
+  let {x, y} =  position;
+  const screenWidth = await screen.width();
+  const screenHeight = await screen.height();
+  if(x < 2 * r + 20) {x = 2 * r + 20}
+  if(y - r < 1) {y = r + 20}
+  if(y + r > screenHeight + 10) {y = screenHeight - r - 10}
+  await mouse.setPosition({x, y});
   const x0 = x - r;
   const y0 = y;
   await mouse.pressButton(Button.LEFT);
