@@ -22,9 +22,9 @@ const wss = new WebSocketServer({ port: WEBSOCKET_PORT });
 wss.on("connection", function connection(ws) {
 
   console.log(`Start websocket server on the ${WEBSOCKET_PORT} port!`);  
-  const stream = createWebSocketStream(ws, {decodeStrings:false});
+  const duplex = createWebSocketStream(ws, {decodeStrings:false});
 
-  stream.on("data", async function message(data) {
+  duplex.on("data", async function message(data) {
     try {  
     const commandArr = data.toString().split(' ');
     const [command, widthFigure, heightFigure] = commandArr;
@@ -33,39 +33,39 @@ wss.on("connection", function connection(ws) {
     switch (command) {
       case 'draw_square':
         await drawSquare(+widthFigure); 
-        stream.write(`${command}\t${+widthFigure}`)        
+        duplex.write(`${command}\t${+widthFigure}`)        
         break;
       case 'draw_circle':
         await drawCircle(+widthFigure); 
-        stream.write(`${command}\t${+widthFigure}`)       
+        duplex.write(`${command}\t${+widthFigure}`)       
         break;
       case 'draw_rectangle':
         await drawRectangle(+widthFigure, +heightFigure);
-        stream.write(`${command}\t${+widthFigure}\t${+heightFigure}`)        
+        duplex.write(`${command}\t${+widthFigure}\t${+heightFigure}`)        
         break; 
       case 'mouse_up':
         await moveMouseUp(+widthFigure);  
-        stream.write(`${command}\t${+widthFigure}`)      
+        duplex.write(`${command}\t${+widthFigure}`)      
         break;
       case 'mouse_down':
         await moveMouseDown(+widthFigure);
-        stream.write(`${command}\t${+widthFigure}`)       
+        duplex.write(`${command}\t${+widthFigure}`)       
         break;
       case 'mouse_left':
         await moveMouseLeft(+widthFigure);
-        stream.write(`${command}\t${+widthFigure}`)        
+        duplex.write(`${command}\t${+widthFigure}`)        
         break;
       case 'mouse_right':
         await moveMouseRight(+widthFigure);
-        stream.write(`${command}\t${+widthFigure}`)        
+        duplex.write(`${command}\t${+widthFigure}`)        
         break;
       case 'mouse_position':
         mouseCoordinate = await mousePosition();
-        stream.write(`${command} ${mouseCoordinate.x},${mouseCoordinate.y}`)               
+        duplex.write(`${command} ${mouseCoordinate.x},${mouseCoordinate.y}`)               
         break;
       case 'prnt_scrn':
         const bufferPhoto = await doPrintScreen();
-        stream.write(`${command} ${bufferPhoto}`)                         
+        duplex.write(`${command} ${bufferPhoto}`)                         
         break; 
       default:
         break;
